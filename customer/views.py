@@ -37,8 +37,15 @@ class VerifyRegisterView(APIView):
         serializer = VerifyRegisterSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'Registration Verified'}, status=status.HTTP_200_OK)
+            details = serializer.save()
+            return Response(
+                {
+                    'message': 'Registration Verified',
+                    'token': details['token'].key,
+                    'user': details['user']
+                },
+                status=status.HTTP_200_OK
+            )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -63,6 +70,7 @@ class LoginView(APIView):
 
 
 class VerifyLoginView(APIView):
+    """Verify authentication credentials"""
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -70,6 +78,17 @@ class VerifyLoginView(APIView):
 
         if serializer.is_valid():
             details = serializer.save()
-            return Response({'message': 'Login Verified', 'token': details['token'].key}, status=status.HTTP_200_OK)
+            return Response(
+                {'message': 'Login Verified', 'token': details['token'].key, 'user': details['user']},
+                status=status.HTTP_200_OK
+            )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(APIView):
+    """Logout a user"""
+
+    def post(self, request):
+        request.user.auth_token.delete()
+        return Response({'message': 'Logged out'}, status=status.HTTP_200_OK)
