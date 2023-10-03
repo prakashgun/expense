@@ -98,10 +98,15 @@ class LoginSerializer(serializers.Serializer):
         pass
 
     def create(self, validated_data):
-        return Customer.objects.get(
-            country_code=validated_data['country_code'],
-            phone=validated_data['phone']
-        )
+        try:
+            return Customer.objects.get(
+                country_code=validated_data['country_code'],
+                phone=validated_data['phone']
+            )
+        except Customer.DoesNotExist:
+            raise serializers.ValidationError(
+                'Cannot verify user. Please use register page if using first time.'
+            )
 
 
 class VerifyLoginSerializer(serializers.Serializer):
