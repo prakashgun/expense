@@ -22,8 +22,8 @@ class PhoneClient:
     def send_otp(otp, full_phone):
         """Send otp to user"""
         try:
-            account_sid = os.environ['TWILIO_ACCOUNT_SID']
-            auth_token = os.environ['TWILIO_AUTH_TOKEN']
+            account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+            auth_token = os.getenv('TWILIO_AUTH_TOKEN')
             client = Client(account_sid, auth_token)
         except KeyError as e:
             logger.error(e)
