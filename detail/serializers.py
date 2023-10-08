@@ -25,7 +25,18 @@ class CategorySerializer(serializers.ModelSerializer):
             message='This category name already exists'
         )]
 
+
 class TransactionSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    account = AccountSerializer(read_only=True)
+
+    class Meta:
+        model = Transaction
+        fields = '__all__'
+
+
+class TransactionAddSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Transaction
         fields = '__all__'

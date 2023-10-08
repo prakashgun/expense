@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from .models import Account, Category, Transaction
 from .permissions import IsOwner
-from .serializers import AccountSerializer, CategorySerializer, TransactionSerializer
+from .serializers import AccountSerializer, CategorySerializer, TransactionSerializer, TransactionAddSerializer
 
 
 class AccountList(APIView):
@@ -146,7 +146,6 @@ class CategoryDetail(APIView):
 
 class TransactionList(APIView):
     """List all transactions or create a new one"""
-
     permission_classes = [permissions.IsAuthenticated, IsOwner]
 
     def get(self, request):
@@ -168,7 +167,7 @@ class TransactionList(APIView):
             'owner': request.user.id
         }
 
-        serializer = TransactionSerializer(data=data)
+        serializer = TransactionAddSerializer(data=data)
 
         if serializer.is_valid():
             serializer.save()
