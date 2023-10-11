@@ -163,3 +163,26 @@ class PrivateAccountListViewTest(TestCase):
         response = self.client.get(reverse('detail:transaction-detail', kwargs={'pk': transaction_id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Transaction 1')
+
+    def test_income_transaction(self):
+        self.test_add_account()
+        account_id = Account.objects.latest('id').id
+        self.test_add_category()
+        category_id = Category.objects.latest('id').id
+
+        response = self.client.post(
+            TRANSACTION_LIST_URL,
+            data={
+                "name": "Transaction 1",
+                "value": 45.50,
+                "is_income": True,
+                "account_id": account_id,
+                "category_id": category_id,
+                "transaction_date": "2023-06-04T10:04:04.737664Z"
+            }
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        transaction_id = Transaction.objects.latest('id').id
+        response = self.client.get(reverse('detail:transaction-detail', kwargs={'pk': transaction_id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['is_income'], True)

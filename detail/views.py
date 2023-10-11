@@ -161,6 +161,7 @@ class TransactionList(APIView):
         data = {
             'name': request.data['name'],
             'value': request.data['value'],
+            'is_income': request.data['is_income'],
             'transaction_date': request.data['transaction_date'],
             'account': request.data['account_id'],
             'category': request.data['category_id'],
