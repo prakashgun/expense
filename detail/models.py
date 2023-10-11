@@ -31,6 +31,9 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = 'categories'
 
+    def __str__(self):
+        return f"{self.name} - {self.id}"
+
 
 class Transaction(models.Model):
     objects = models.Manager()
