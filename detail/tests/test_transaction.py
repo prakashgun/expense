@@ -191,3 +191,46 @@ class PrivateAccountListViewTest(TestCase):
         response = self.client.get(reverse('detail:transaction-detail', kwargs={'pk': transaction_id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['is_income'], True)
+
+    def test_transfer(self):
+        self.test_add_account()
+        account_id = Account.objects.latest('id').id
+        self.test_add_category()
+        category_id = Category.objects.latest('id').id
+
+        response = self.client.post(
+            TRANSACTION_LIST_URL,
+            data={
+                "name": "Transaction 1",
+                "value": 19.50,
+                "type": "Transfer",
+                "is_income": False,
+                "account_id": account_id,
+                "category_id": category_id,
+                "transaction_date": "2023-06-04T10:04:04.737664Z"
+            }
+        )
+
+        transaction_id = response.json()['id']
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(
+            TRANSACTION_LIST_URL,
+            data={
+                "name": "Transaction 2",
+                "value": 19.50,
+                "type": "Transfer",
+                "is_income": True,
+                "account_id": account_id,
+                "category_id": category_id,
+                "transfer_id": transaction_id,
+                "transaction_date": "2023-06-04T10:04:04.737664Z"
+            }
+        )
+
+        to_transaction_id = response.json()['id']
+        response = self.client.get(reverse('detail:transaction-detail', kwargs={'pk': to_transaction_id}))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(str(response.data['transfer']), transaction_id)
