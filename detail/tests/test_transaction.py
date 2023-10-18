@@ -157,7 +157,6 @@ class PrivateAccountListViewTest(TestCase):
                 "value": 19.50,
                 "type": "Expense",
                 "is_income": False,
-                "type": "Expense",
                 "account_id": account_id,
                 "category_id": category_id,
                 "transaction_date": "2023-06-04T10:04:04.737664Z"
