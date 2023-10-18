@@ -161,11 +161,13 @@ class TransactionList(APIView):
         data = {
             'name': request.data['name'],
             'value': request.data['value'],
+            'type': request.data['type'],
             'is_income': request.data['is_income'],
             'transaction_date': request.data['transaction_date'],
             'account': request.data['account_id'],
             'category': request.data['category_id'],
-            'owner': request.user.id
+            'owner': request.user.id,
+            'transfer': request.data.get('transfer_id', None)
         }
 
         serializer = TransactionAddSerializer(data=data)
