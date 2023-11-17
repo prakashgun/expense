@@ -4,6 +4,8 @@ from rest_framework import permissions
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.db.models import Q
+from datetime import datetime
 
 from .models import Account, Category, Transaction
 from .permissions import IsOwner
@@ -149,12 +151,22 @@ class TransactionList(APIView):
     permission_classes = [permissions.IsAuthenticated, IsOwner]
 
     def get(self, request):
-        transactions = Transaction.objects.filter(owner=request.user)
+        filter_conditions = Q(owner=request.user)
 
-        for transaction in transactions:
-            self.check_object_permissions(request, transaction)
+        created_date = request.query_params.get('created_date')
+
+        if created_date:
+            try:
+                parsed_date = datetime.strptime(created_date, "%Y-%m-%d")
+            except ValueError:
+                # Handle invalid date format
+                return Response({"error": "Invalid date format"}, status=400)
+            filter_conditions &= Q(created__date=parsed_date)
+
+        transactions = Transaction.objects.filter(filter_conditions)
 
         serializer = TransactionSerializer(transactions, many=True)
+
         return Response(serializer.data)
 
     def post(self, request):
