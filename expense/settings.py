@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # Third party
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
 
     # App
     'customer',
@@ -58,6 +59,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Third party
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'expense.urls'
@@ -145,3 +149,7 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'customer.User'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:19006",  # your frontend web app's address
+]
