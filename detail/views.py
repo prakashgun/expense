@@ -153,18 +153,12 @@ class TransactionList(APIView):
     def get(self, request):
         filter_conditions = Q(owner=request.user)
 
-        created_date = request.query_params.get('created_date')
+        transaction_date = request.query_params.get('transaction_date')
 
-        if created_date:
-            try:
-                parsed_date = datetime.strptime(created_date, "%Y-%m-%d")
-            except ValueError:
-                # Handle invalid date format
-                return Response({"error": "Invalid date format"}, status=400)
-            filter_conditions &= Q(created__date=parsed_date)
+        if transaction_date:
+            filter_conditions &= Q(transaction_date__date=transaction_date)
 
         transactions = Transaction.objects.filter(filter_conditions)
-
         serializer = TransactionSerializer(transactions, many=True)
 
         return Response(serializer.data)
